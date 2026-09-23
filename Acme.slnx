@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/libs/">
+    <Project Path="libs/Acme.Application/Acme.Application.csproj" />
+    <Project Path="libs/Acme.Contracts/Acme.Contracts.csproj" />
+    <Project Path="libs/Acme.Domain/Acme.Domain.csproj" />
+    <Project Path="libs/Acme.Infrastructure/Acme.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/services/">
+    <Project Path="services/Acme.Api/Acme.Api.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Acme.Api.Tests/Acme.Api.Tests.csproj" />
+    <Project Path="tests/Acme.Application.Tests/Acme.Application.Tests.csproj" />
+  </Folder>
+</Solution>

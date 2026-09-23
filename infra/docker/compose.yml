@@ -1,0 +1,30 @@
+# Local dev dependencies only. The API and web run on the host (dotnet watch / next dev).
+name: acme
+
+services:
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: acme
+      POSTGRES_PASSWORD: acme
+      POSTGRES_DB: acme
+    ports: ["5432:5432"]
+    volumes: [postgres-data:/var/lib/postgresql]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U acme"]
+      interval: 5s
+      retries: 10
+
+  seq: # structured log viewer — http://localhost:5341
+    image: datalust/seq:latest
+    environment:
+      ACCEPT_EULA: "Y"
+      SEQ_FIRSTRUN_NOAUTHENTICATION: "true"
+    ports: ["5341:80"]
+
+  mailpit: # catches outgoing mail — http://localhost:8025
+    image: axllent/mailpit:latest
+    ports: ["1025:1025", "8025:8025"]
+
+volumes:
+  postgres-data:

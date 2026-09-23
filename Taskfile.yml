@@ -1,0 +1,49 @@
+# https://taskfile.dev — one entry point for both toolchains.
+# TODO(taskfile) — yours to write. The task names below are the contract that CI, lefthook and the
+# README already depend on; fill in cmds/deps. Delete each TODO line as you go.
+#
+# Syntax you'll want:   cmds: [...]   deps: [...] (parallel)   {{.CLI_ARGS}} (args after `--`)
+#                       dir:          sources:/generates: (skip work when inputs are unchanged)
+#                       internal: true   desc: (shows in `task --list`)
+version: "3"
+
+tasks:
+  setup:
+    desc: Install everything a fresh clone needs
+    # TODO: pnpm install, dotnet restore, dotnet tool restore
+
+  up:
+    desc: Start local infra (postgres, seq, mailpit)
+    # TODO: docker compose with -f infra/docker/compose.yml, detached, --wait
+
+  down:
+    desc: Stop local infra
+    # TODO
+
+  dev:
+    desc: Run API + web in parallel
+    # TODO: deps on dev:api and dev:web
+
+  dev:api:
+    # TODO: dotnet watch for services/Acme.Api
+
+  dev:web:
+    # TODO: pnpm --filter @acme/web dev
+
+  build:
+    # TODO: dotnet build Acme.slnx + pnpm build
+
+  test:
+    # TODO: dotnet test Acme.slnx + pnpm test
+
+  lint:
+    # TODO: dotnet format --verify-no-changes + pnpm lint + pnpm format:check
+
+  codegen:
+    desc: DTOs → contracts/openapi.json → packages/api-client
+    # TODO: the order matters. Which step produces the input for the next one?
+
+  init:
+    desc: "Rename the template: task init -- MyProduct"
+    cmds:
+      - node tools/init.mjs {{.CLI_ARGS}}

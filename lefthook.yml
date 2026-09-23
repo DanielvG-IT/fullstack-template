@@ -1,0 +1,10 @@
+# Fast, staged-files-only checks. CI runs the full suite.
+pre-commit:
+  parallel: true
+  jobs:
+    - name: prettier
+      glob: "*.{ts,tsx,js,mjs,json,css,md,yml,yaml}"
+      run: pnpm prettier --check {staged_files}
+    - name: dotnet-format
+      glob: "*.cs"
+      run: dotnet format Acme.slnx --verify-no-changes --include {staged_files}

@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      dotnet: ${{ steps.filter.outputs.dotnet }}
+      web: ${{ steps.filter.outputs.web }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            shared: &shared
+              - .github/workflows/**
+              - contracts/**
+            dotnet:
+              - *shared
+              - "services/**"
+              - "libs/**"
+              - "tests/**"
+              - "*.props"
+              - "*.slnx"
+              - global.json
+              - .editorconfig
+            web:
+              - *shared
+              - "apps/**"
+              - "packages/**"
+              - "package.json"
+              - "pnpm-*.yaml"
+              - turbo.json
+
+  dotnet:
+    needs: changes
+    if: needs.changes.outputs.dotnet == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+      - run: dotnet restore Acme.slnx
+      - run: dotnet format Acme.slnx --verify-no-changes --no-restore
+      - run: dotnet build Acme.slnx --no-restore -c Release
+      - run: dotnet test Acme.slnx --no-build -c Release
+
+  web:
+    needs: changes
+    if: needs.changes.outputs.web == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm format:check
+      - run: pnpm turbo run lint typecheck test build
+
+  # TODO(contract-pipeline) — yours to write. This is the job that makes the monorepo worth it.
+  # Runs whenever either side changes. Steps, in words:
+  #   1. set up BOTH toolchains (copy the setup steps above)
+  #   2. run the same thing `task codegen` runs
+  #   3. fail if the working tree changed — think: which git command exits non-zero on a dirty tree?
+  #      bonus: print the diff before failing so the log says *what* drifted.
+  # contract:
+  #   needs: changes
+  #   if: needs.changes.outputs.dotnet == 'true' || needs.changes.outputs.web == 'true'

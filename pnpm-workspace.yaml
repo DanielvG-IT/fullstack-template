@@ -1,0 +1,37 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+
+# Native postinstall scripts are opt-in since pnpm 10. Allow only what you trust.
+allowBuilds:
+  lefthook: true # downloads its platform binary
+  sharp: false
+  unrs-resolver: false
+
+# NOTE for adding Expo later: recent Expo SDKs support pnpm's isolated installs, so try the
+# default first. Only reach for `nodeLinker: hoisted` if Metro can't resolve workspace packages.
+
+# Catalog = pnpm's answer to Directory.Packages.props. Packages reference `"catalog:"`
+# instead of a version, so "upgrade TypeScript" is one line, not one per package.
+catalog:
+  typescript: ~6.0.3 # typescript-eslint requires <6.1 — bump together
+  eslint: ^9.39.5 # eslint-plugin-react (via eslint-config-next) doesn't support 10 yet
+  "@eslint/js": ^9.39.5
+  typescript-eslint: ^8.70.1
+  "@types/node": ^24.13.6
+  "@types/react": ^19.3.0
+  "@types/react-dom": ^19.3.0
+  react: 19.2.8
+  react-dom: 19.2.8
+  next: 16.3.5
+  eslint-config-next: 16.3.5
+  tailwindcss: ^4.3.3
+  "@tailwindcss/postcss": ^4.3.3
+  vitest: ^5.0.1
+  zod: ^4.6.5
+
+peerDependencyRules:
+  allowedVersions:
+    # openapi-typescript declares typescript ^5; TS 6 is the compatibility bridge release.
+    # Remove once openapi-typescript widens its peer range.
+    openapi-typescript>typescript: "6"

@@ -1,0 +1,8 @@
+pnpm-lock.yaml
+contracts/
+**/schema.d.ts
+**/bin/
+**/obj/
+**/*.cs
+**/*.csproj
+*.slnx

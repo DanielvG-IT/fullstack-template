@@ -1,0 +1,5 @@
+* text=auto eol=lf
+*.{cmd,bat,ps1} text eol=crlf
+# Generated — collapse in PR diffs
+contracts/openapi.json linguist-generated=true
+packages/api-client/src/schema.d.ts linguist-generated=true
