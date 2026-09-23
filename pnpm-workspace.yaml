@@ -18,7 +18,7 @@ catalog:
   eslint: ^9.39.5 # eslint-plugin-react (via eslint-config-next) doesn't support 10 yet
   "@eslint/js": ^9.39.5
   typescript-eslint: ^8.70.1
-  "@types/node": ^24.13.6
+  "@types/node": ^26.6.2
   "@types/react": ^19.3.0
   "@types/react-dom": ^19.3.0
   react: 19.2.8
