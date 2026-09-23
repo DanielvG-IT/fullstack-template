@@ -15,7 +15,7 @@ allowBuilds:
 # instead of a version, so "upgrade TypeScript" is one line, not one per package.
 catalog:
   typescript: ~6.0.3 # typescript-eslint requires <6.1 — bump together
-  eslint: ^9.39.5 # eslint-plugin-react (via eslint-config-next) doesn't support 10 yet
+  eslint: ^10.11.0 # eslint-plugin-react (via eslint-config-next) doesn't support 10 yet
   "@eslint/js": ^9.39.5
   typescript-eslint: ^8.70.1
   "@types/node": ^24.13.6
