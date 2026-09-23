@@ -7,15 +7,31 @@ updates:
     groups:
       dotnet:
         patterns: ["*"]
+
   - package-ecosystem: npm # pnpm lockfile + catalog are detected
     directory: /
     schedule: { interval: weekly }
     groups:
       minor-and-patch:
         update-types: [minor, patch]
+    # Toolchain caps — each one mirrors a comment in pnpm-workspace.yaml. Lift them together.
+    ignore:
+      - dependency-name: typescript # typescript-eslint supports <6.1
+        versions: [">=6.1"]
+      - dependency-name: eslint # eslint-plugin-react (via eslint-config-next) supports 9
+        versions: [">=10"]
+      - dependency-name: "@eslint/js" # must match the eslint major
+        versions: [">=10"]
+      - dependency-name: "@types/node" # must match the Node major in .nvmrc
+        versions: [">=25"]
+
   - package-ecosystem: github-actions
     directory: /
     schedule: { interval: monthly }
+    groups:
+      actions:
+        patterns: ["*"]
+
   - package-ecosystem: docker-compose
     directory: /infra/docker
     schedule: { interval: monthly }
