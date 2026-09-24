@@ -114,3 +114,9 @@ tasks:
     desc: "Rename the template once: task init -- MyProduct"
     cmds:
       - node tools/init.mjs {{.CLI_ARGS}}
+      # New names change the lockfiles, and longer/shorter names shift Markdown tables.
+      - pnpm install
+      - pnpm format
+      - dotnet build
+      - cmd: echo "Done. Delete the init task and tools/init.mjs, then commit."
+        silent: true
