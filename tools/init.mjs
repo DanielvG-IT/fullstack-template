@@ -3,11 +3,10 @@
 //   Acme  → <Name>        (C# namespaces, project/solution files)
 //   acme  → <kebab-name>  (npm scope @acme/*, compose project, db user)
 //
-// Usage: task init -- MyProduct   (or: node tools/init.mjs MyProduct)
+// Only renames. Run it via `task init -- MyProduct`, which then reinstalls, reformats and rebuilds.
 import { readdirSync, readFileSync, renameSync, statSync, writeFileSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { execSync } from "node:child_process";
 
 const name = process.argv[2];
 if (!name || !/^[A-Z][A-Za-z0-9]*$/.test(name)) {
@@ -71,7 +70,3 @@ for (const p of paths) {
 console.log(
   `Renamed Acme → ${name} (@${kebab}/*): ${edited} files edited, ${renamed} paths renamed.`,
 );
-console.log("Reinstalling so the lockfile and build outputs match the new names…");
-execSync("pnpm install", { cwd: root, stdio: "inherit" });
-execSync(`dotnet build ${name}.slnx`, { cwd: root, stdio: "inherit" });
-console.log("\nDone. Remove the `init` task from Taskfile.yml and tools/init.mjs, then commit.");
