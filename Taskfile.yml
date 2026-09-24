@@ -1,49 +1,116 @@
-# https://taskfile.dev — one entry point for both toolchains.
-# TODO(taskfile) — yours to write. The task names below are the contract that CI, lefthook and the
-# README already depend on; fill in cmds/deps. Delete each TODO line as you go.
-#
-# Syntax you'll want:   cmds: [...]   deps: [...] (parallel)   {{.CLI_ARGS}} (args after `--`)
-#                       dir:          sources:/generates: (skip work when inputs are unchanged)
-#                       internal: true   desc: (shows in `task --list`)
+# https://taskfile.dev — one entry point for both toolchains. Run `task` to see everything.
 version: "3"
 
+vars:
+  SLN: Acme.slnx
+  API: services/Acme.Api
+  COMPOSE: docker compose -f infra/docker/compose.yml
+
 tasks:
+  default:
+    silent: true
+    cmds:
+      - task --list
+
+  # ── Setup & infra ────────────────────────────────────────────────────────────
+
   setup:
     desc: Install everything a fresh clone needs
-    # TODO: pnpm install, dotnet restore, dotnet tool restore
+    cmds:
+      - pnpm install
+      - dotnet tool restore
+      - dotnet restore {{.SLN}}
+      - task: env
+
+  env:
+    desc: Create local env files from their .example (never overwrites)
+    status:
+      - test -f apps/web/.env.local
+    cmds:
+      - cp apps/web/.env.example apps/web/.env.local
 
   up:
-    desc: Start local infra (postgres, seq, mailpit)
-    # TODO: docker compose with -f infra/docker/compose.yml, detached, --wait
+    desc: Start local infra (Postgres, Seq, Mailpit) and wait until healthy
+    cmds:
+      - "{{.COMPOSE}} up --detach --wait"
 
   down:
-    desc: Stop local infra
-    # TODO
+    desc: Stop local infra (data is kept)
+    cmds:
+      - "{{.COMPOSE}} down"
+
+  reset:
+    desc: Stop local infra AND delete its data volumes
+    prompt: This deletes all local database data. Continue?
+    cmds:
+      - "{{.COMPOSE}} down --volumes"
+
+  # ── Development ──────────────────────────────────────────────────────────────
 
   dev:
-    desc: Run API + web in parallel
-    # TODO: deps on dev:api and dev:web
+    desc: Run API + web together (Ctrl+C stops both)
+    deps: [dev:api, dev:web]
 
   dev:api:
-    # TODO: dotnet watch for services/Acme.Api
+    desc: API with hot reload on http://localhost:5080
+    cmds:
+      - dotnet watch run --project {{.API}} --launch-profile http
 
   dev:web:
-    # TODO: pnpm --filter @acme/web dev
+    desc: Web with hot reload on http://localhost:3000
+    deps: [env]
+    cmds:
+      - pnpm --filter @acme/web dev
+
+  # ── Quality gates (CI runs the same commands) ────────────────────────────────
 
   build:
-    # TODO: dotnet build Acme.slnx + pnpm build
+    desc: Build both halves (also regenerates contracts/openapi.json)
+    cmds:
+      - dotnet build {{.SLN}}
+      - pnpm build
 
   test:
-    # TODO: dotnet test Acme.slnx + pnpm test
+    desc: Run all tests
+    cmds:
+      - dotnet test {{.SLN}}
+      - pnpm test
 
   lint:
-    # TODO: dotnet format --verify-no-changes + pnpm lint + pnpm format:check
+    desc: Check formatting, lint and types — changes nothing
+    cmds:
+      - dotnet format {{.SLN}} --verify-no-changes
+      - pnpm format:check
+      - pnpm lint
+      - pnpm typecheck
+
+  format:
+    desc: Fix formatting in both halves
+    cmds:
+      - dotnet format {{.SLN}}
+      - pnpm format
 
   codegen:
-    desc: DTOs → contracts/openapi.json → packages/api-client
-    # TODO: the order matters. Which step produces the input for the next one?
+    desc: C# DTOs → contracts/openapi.json → packages/api-client
+    cmds:
+      # 1. Building the API runs the OpenAPI generator (see Acme.Api.csproj).
+      - dotnet build {{.API}}
+      # 2. The generated spec becomes the typed TS client.
+      - pnpm --filter @acme/api-client generate
+
+  check:
+    desc: Everything CI checks (codegen regenerates instead of failing) — run before a PR
+    cmds:
+      - task: lint
+      - task: codegen
+      - task: test
+      - task: build
+      - cmd: echo "All checks passed. If codegen changed contracts/ or packages/api-client/, commit those too."
+        silent: true
+
+  # ── Template ─────────────────────────────────────────────────────────────────
 
   init:
-    desc: "Rename the template: task init -- MyProduct"
+    desc: "Rename the template once: task init -- MyProduct"
     cmds:
       - node tools/init.mjs {{.CLI_ARGS}}

@@ -6,3 +6,4 @@ contracts/
 **/*.cs
 **/*.csproj
 *.slnx
+**/packages.lock.json

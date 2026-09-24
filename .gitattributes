@@ -3,3 +3,4 @@
 # Generated — collapse in PR diffs
 contracts/openapi.json linguist-generated=true
 packages/api-client/src/schema.d.ts linguist-generated=true
+**/packages.lock.json linguist-generated=true

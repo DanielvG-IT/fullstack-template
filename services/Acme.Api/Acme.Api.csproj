@@ -1,19 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <!--
-    TODO(contract-pipeline) — yours to write. Goal: `dotnet build` emits ../../contracts/openapi.json.
-    Hints, not answers:
-      - package:  Microsoft.Extensions.ApiDescription.Server (add its version in Directory.Packages.props;
-                  it's a build-time tool, so think about PrivateAssets / IncludeAssets)
-      - props:    OpenApiGenerateDocumentsOnBuild, OpenApiDocumentsDirectory
-      - gotcha:   the default file name is derived from the assembly name, not "openapi.json" —
-                  look up OpenApiGenerateDocumentsOptions (the "fileName" option)
-      - gotcha:   build-time generation boots your Program; anything that needs a DB/secret at startup
-                  will break the build. Know how to detect you're in the generator.
+    Contract pipeline, step 1: every build writes ../../contracts/openapi.json.
+    That file is committed; `task codegen` turns it into packages/api-client, and CI fails if either drifts.
   -->
+  <PropertyGroup>
+    <OpenApiGenerateDocumentsOnBuild>true</OpenApiGenerateDocumentsOnBuild>
+    <OpenApiDocumentsDirectory>$(MSBuildThisFileDirectory)../../contracts</OpenApiDocumentsDirectory>
+    <OpenApiGenerateDocumentsOptions>--file-name openapi</OpenApiGenerateDocumentsOptions>
+  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <!-- Build-time tool only: never flows to consumers or into the published app. -->
+    <PackageReference Include="Microsoft.Extensions.ApiDescription.Server">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>

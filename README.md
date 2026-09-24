@@ -20,6 +20,26 @@ Acme.Contracts (C# DTOs) ──build──▶ contracts/openapi.json ──codeg
    `Acme` → `MyProduct` (namespaces, files, solution), `acme` → `my-product` (npm scope, compose).
 
 4. `task setup && task up && task dev` → API on http://localhost:5080, web on http://localhost:3000.
+5. Set up branch protection — rulesets aren't copied with a template. Import the JSON files from
+   your rulesets collection (Settings → Rules → Rulesets → Import), or run its `apply.sh`.
+
+## Daily commands
+
+| Command                      | What                                                                        |
+| ---------------------------- | --------------------------------------------------------------------------- |
+| `task dev`                   | API + web with hot reload                                                   |
+| `task codegen`               | After changing a DTO or endpoint: regenerate `openapi.json` + the TS client |
+| `task check`                 | Everything CI checks — run before opening a PR                              |
+| `task format`                | Auto-fix formatting in both halves                                          |
+| `task up` / `down` / `reset` | Local infra: start / stop / wipe data                                       |
+| `task`                       | List every task                                                             |
+
+## Changing the API
+
+1. Change or add a DTO in `libs/Acme.Contracts` and the endpoint in `services/Acme.Api`.
+2. `task codegen` — `contracts/openapi.json` and `packages/api-client/src/schema.d.ts` update.
+3. Use it from the web: `await api().GET("/api/your-route")` is fully typed (see `apps/web/src/app/page.tsx`).
+4. Commit all three together. CI's `contract` job fails if you forget step 2.
 
 ## Layout
 
@@ -48,10 +68,6 @@ Not included by default — add when a project needs them, and write an ADR when
   add `db:migrate` / `db:add` tasks.
 - **Shared UI (`packages/ui`):** only once web _and_ mobile exist and you've duplicated a component twice.
 
-## Template status
+## Security
 
-- [x] .NET solution, CPM, analyzers-as-errors, integration test
-- [x] pnpm workspace + catalog, turbo, Next.js, shared tsconfig/eslint, vitest
-- [x] Compose, CI (path-filtered), Dependabot, lefthook, rename script
-- [ ] **Contract pipeline**: OpenAPI emitted on build → `openapi-typescript` → CI drift check (`TODO(contract-pipeline)`)
-- [ ] **Taskfile** (`TODO(taskfile)`)
+See [SECURITY.md](SECURITY.md) for what's hardened by default and what each project must decide.

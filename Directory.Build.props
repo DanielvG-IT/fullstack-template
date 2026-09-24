@@ -12,6 +12,16 @@
     <Product>Acme</Product>
   </PropertyGroup>
 
+  <!-- Supply chain: audit direct AND transitive packages (warnings are errors, so a known CVE
+       fails the build), and pin the full graph in packages.lock.json. CI restores in locked mode,
+       so it gets exactly what was committed. -->
+  <PropertyGroup>
+    <NuGetAudit>true</NuGetAudit>
+    <NuGetAuditMode>all</NuGetAuditMode>
+    <NuGetAuditLevel>low</NuGetAuditLevel>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+  </PropertyGroup>
+
   <PropertyGroup Condition="$(MSBuildProjectName.EndsWith('.Tests'))">
     <IsPackable>false</IsPackable>
   </PropertyGroup>
