@@ -73,5 +73,7 @@ console.log(
 );
 console.log("Reinstalling so the lockfile and build outputs match the new names…");
 execSync("pnpm install", { cwd: root, stdio: "inherit" });
+// Longer/shorter names shift Markdown tables and line wrapping.
+execSync("pnpm format", { cwd: root, stdio: "inherit" });
 execSync(`dotnet build ${name}.slnx`, { cwd: root, stdio: "inherit" });
 console.log("\nDone. Remove the `init` task from Taskfile.yml and tools/init.mjs, then commit.");
