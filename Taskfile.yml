@@ -52,7 +52,7 @@ tasks:
     deps: [dev:api, dev:web]
 
   dev:api:
-    desc: API with hot reload on http://localhost:5080
+    desc: API with hot reload on http://localhost:8080
     cmds:
       - dotnet watch run --project {{.API}} --launch-profile http
 
