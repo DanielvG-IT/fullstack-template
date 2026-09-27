@@ -18,6 +18,7 @@ Acme.Contracts (C# DTOs) ──build──▶ contracts/openapi.json ──codeg
    ```
 
    `Acme` → `MyProduct` (namespaces, files, solution), `acme` → `my-product` (npm scope, compose).
+   It also gives the API its own user-secrets ID, so `dotnet user-secrets set` works right away.
 
 4. `task setup && task up && task dev` → API on http://localhost:8080, web on http://localhost:3000.
 5. Set up branch protection — rulesets aren't copied with a template. Import the JSON files from
@@ -65,7 +66,9 @@ Not included by default — add when a project needs them, and write an ADR when
   auto-configure Metro for monorepos. Fall back to `nodeLinker: hoisted` only if resolution fails.
 - **Background worker:** `dotnet new worker -o services/Acme.Workers.<Name>`, add to `Acme.slnx`.
 - **EF Core:** add to `Acme.Infrastructure`, `dotnet tool install dotnet-ef` (local manifest),
-  add `db:migrate` / `db:add` tasks.
+  add `db:migrate` / `db:add` tasks. Put the local connection string (it matches
+  `infra/docker/compose.yml`, so it's no secret) in a committed `appsettings.Development.json`;
+  real secrets go in user secrets.
 - **Shared UI (`packages/ui`):** only once web _and_ mobile exist and you've duplicated a component twice.
 
 ## Security
