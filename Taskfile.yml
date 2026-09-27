@@ -120,6 +120,9 @@ tasks:
       # New names also re-sort `using` directives (a name after "Microsoft" breaks import order).
       # Bare `dotnet format`/`dotnet build`: {{.SLN}} still holds the old name until Task re-reads this file.
       - dotnet format
+      # A fresh UserSecretsId per project. A fixed one in the template would make every project
+      # read and overwrite the same secrets store. ({{.API}} also still holds the old name.)
+      - dotnet user-secrets init --project services/{{.CLI_ARGS}}.Api
       - dotnet build
       - cmd: echo "Done. Delete the init task and tools/init.mjs, then commit."
         silent: true
