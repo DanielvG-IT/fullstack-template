@@ -22,3 +22,5 @@ directly. You'll get a response within a week.
 - **Authentication/authorization, rate limiting, CORS** — depend on the product.
 - **Secrets** — use `dotnet user-secrets` / `.env.local` locally and the host's secret store in
   production. Never commit them; GitGuardian scans every push.
+- **HTTPS** — the API speaks plain HTTP; TLS is expected to terminate at a reverse proxy, so there's
+  no HTTPS launch profile. No proxy in front? Add a profile back and use `UseHttpsRedirection`.

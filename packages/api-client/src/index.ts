@@ -4,7 +4,7 @@ import type { paths } from "./schema";
 export type { components, paths } from "./schema";
 
 export interface ApiClientOptions extends Omit<ClientOptions, "baseUrl"> {
-  /** Absolute origin of the .NET API, e.g. `http://localhost:5080`. Injected, never read from env here. */
+  /** Absolute origin of the .NET API, e.g. `http://localhost:8080`. Injected, never read from env here. */
   baseUrl: string;
 }
 

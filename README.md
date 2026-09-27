@@ -19,7 +19,7 @@ Acme.Contracts (C# DTOs) ──build──▶ contracts/openapi.json ──codeg
 
    `Acme` → `MyProduct` (namespaces, files, solution), `acme` → `my-product` (npm scope, compose).
 
-4. `task setup && task up && task dev` → API on http://localhost:5080, web on http://localhost:3000.
+4. `task setup && task up && task dev` → API on http://localhost:8080, web on http://localhost:3000.
 5. Set up branch protection — rulesets aren't copied with a template. Import the JSON files from
    your rulesets collection (Settings → Rules → Rulesets → Import), or run its `apply.sh`.
 
