@@ -117,6 +117,9 @@ tasks:
       # New names change the lockfiles, and longer/shorter names shift Markdown tables.
       - pnpm install
       - pnpm format
+      # New names also re-sort `using` directives (a name after "Microsoft" breaks import order).
+      # Bare `dotnet format`/`dotnet build`: {{.SLN}} still holds the old name until Task re-reads this file.
+      - dotnet format
       - dotnet build
       - cmd: echo "Done. Delete the init task and tools/init.mjs, then commit."
         silent: true
